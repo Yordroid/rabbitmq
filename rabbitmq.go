@@ -38,7 +38,7 @@ type Rabbitmq struct {
 	PublishRetryDelay time.Duration
 }
 
-type Handler func([]byte) error
+type Handler func(exchangeName string, bodyMsg []byte) error
 
 func (r *Rabbitmq) Connect() error {
 	config := defaultAmqpConfig
@@ -103,7 +103,7 @@ func (r *Rabbitmq) Subscribe(handler Handler, options ...Option) error {
 	opts := newOptions(options...)
 
 	fn := func(msg amqp.Delivery) {
-		err := handler(msg.Body)
+		err := handler(msg.Exchange, msg.Body)
 		if err != nil {
 			log.Printf("Waring: rabbitmq subscribe handle: %v", err)
 		}
