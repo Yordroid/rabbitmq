@@ -35,6 +35,18 @@ func (r *rabbitmqChannel) DeclareExchange(ex ExchangeOptions) error {
 		ex.Name,         // name
 		string(ex.Type), // kind
 		ex.Durable,      // durable
+		true,            // autoDelete
+		false,           // internal
+		false,           // noWait
+		nil,             // args
+	)
+}
+
+func (r *rabbitmqChannel) DeclareDurableExchange(ex ExchangeOptions) error {
+	return r.rawChannel.ExchangeDeclare(
+		ex.Name,         // name
+		string(ex.Type), // kind
+		ex.Durable,      // durable
 		false,           // autoDelete
 		false,           // internal
 		false,           // noWait

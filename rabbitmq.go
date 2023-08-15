@@ -71,7 +71,13 @@ func (r *Rabbitmq) Close() error {
 
 // Exchange 创建交换机
 func (r *Rabbitmq) Exchange(opts ExchangeOptions) error {
-	return r.conn.DeclareExchange(opts)
+	var err error
+	if !opts.Durable {
+		err = r.conn.DeclareExchange(opts)
+	} else {
+		err = r.conn.DeclareDurableExchange(opts)
+	}
+	return err
 }
 
 // Publish 发布消息，如果发送失败会自动重试

@@ -261,6 +261,16 @@ func (r *rabbitmqConn) DeclareExchange(opts ExchangeOptions) error {
 	return r.channel.DeclareExchange(opts)
 }
 
+// DeclareDurableExchange 声明交换机，如果已经声明过则不再声明
+func (r *rabbitmqConn) DeclareDurableExchange(opts ExchangeOptions) error {
+	if _, ok := r.exchangeMap.Load(opts.Name); ok {
+		return nil
+	}
+
+	r.exchangeMap.Store(opts.Name, opts)
+	return r.channel.DeclareDurableExchange(opts)
+}
+
 // ForceDeclareExchange 强制声明交换机，不管是否已经声明过
 func (r *rabbitmqConn) ForceDeclareExchange(opts ExchangeOptions) error {
 	r.exchangeMap.Store(opts.Name, opts)
